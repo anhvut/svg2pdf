@@ -1,9 +1,16 @@
 """
-Courtesy of https://github.com/Kozea/CairoSVG/issues/200#issuecomment-709015462
+Based on https://github.com/Kozea/CairoSVG/issues/200#issuecomment-709015462
 """
+import sys
+import os
+
 import cairocffi
+import click
 from cairosvg.parser import Tree
 from cairosvg.surface import PDFSurface
+
+
+VERSION = "0.0.1"
 
 
 class RecordingPDFSurface(PDFSurface):
@@ -28,4 +35,34 @@ def convert_list(urls, write_to, dpi=72):
     surface.finish()
 
 
-convert_list(["/tmp/file1.svg", "/tmp/file2.svg"], "/tmp/out.pdf")
+@click.command()
+@click.argument("input_files", nargs=-1, type=str)
+@click.option("--output", "-o", type=str, help="Specify output file")
+@click.option("--dpi", "-d", type=int, default=72, help="Specify DPI (default 72)")
+@click.option("--version", "-v", is_flag=True, help="Display version number")
+def run(input_files, output, dpi, version):
+    if version:
+        print(f"{os.path.basename(__file__)} version {VERSION}")
+        return
+    if len(input_files) == 0:
+        print("No input file(s) specified")
+        sys.exit(1)
+    input_ok = True
+    for input_file in input_files:
+        if not os.path.exists(input_file):
+            input_ok = False
+            print(f"Input file {input_file} cannot be read")
+    if not input_ok:
+        sys.exit(1)
+    if not output:
+        print("No output file specified")
+        sys.exit(1)
+    output_dir = os.path.dirname(output) or "."
+    if not os.access(output_dir, os.W_OK):
+        print(f"Output file {output} cannot be written")
+        sys.exit(1)
+    convert_list(input_files, output, dpi)
+
+
+if __name__ == "__main__":
+    run()
