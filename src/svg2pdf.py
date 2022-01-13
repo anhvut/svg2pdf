@@ -1,4 +1,9 @@
-"""
+#!/bin/sh
+"true" '''\'
+exec "$(dirname "$(readlink -f "$0")")"/../.venv/bin/python "$0" "$@"
+'''
+
+__doc__ = """
 Based on https://github.com/Kozea/CairoSVG/issues/200#issuecomment-709015462
 """
 import sys
