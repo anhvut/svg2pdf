@@ -1,0 +1,11 @@
+[tool.poetry]
+name = "svg2pdf"
+version = "0.0.1"
+description = "Convert svg to pdf"
+authors = ["Anh-Vu Tran"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = ">=3.7"
+CairoSVG = "~=2.7.1"
+click = "~=8.1.7"
